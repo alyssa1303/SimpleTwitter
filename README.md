@@ -37,7 +37,7 @@ Here's a walkthrough of implemented user stories:
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+My main challenge is to create the UI so that it resembles Twitter UI. 
 
 ## Open-source libraries used
 
