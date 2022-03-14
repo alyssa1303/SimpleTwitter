@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate
 
 import android.content.Context
+import com.codepath.apps.restclienttemplate.models.Tweet
 import com.codepath.asynchttpclient.RequestParams
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import com.codepath.oauth.OAuthBaseClient
@@ -59,5 +60,23 @@ class TwitterClient(context: Context) : OAuthBaseClient(
         params.put("count", "25")
         params.put("since_id", "1")
         client.get(apiUrl, params, handler)
+    }
+
+    fun getMoreData(handler: JsonHttpResponseHandler, page: Int) {
+        val apiUrl =
+            getApiUrl("statuses/home_timeline.json")
+
+        val params = RequestParams()
+        params.put("count", "25")
+        params.put("since_id", "50")
+        client.get(apiUrl, params, handler)
+    }
+
+    fun postTweet(handler: JsonHttpResponseHandler, tweetContent: String) {
+        val apiUrl = getApiUrl("statuses/update.json")
+
+        val params = RequestParams()
+        params.put("status", tweetContent)
+        client.post(apiUrl, params, "", handler)
     }
 }

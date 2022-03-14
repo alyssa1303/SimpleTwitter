@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate
 
 import android.text.Layout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.codepath.apps.restclienttemplate.models.Tweet
 
+private const val TAG = "TweetsAdapter"
 class TweetsAdapter(val tweets: ArrayList<Tweet>) : RecyclerView.Adapter<TweetsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TweetsAdapter.ViewHolder {
@@ -27,6 +29,7 @@ class TweetsAdapter(val tweets: ArrayList<Tweet>) : RecyclerView.Adapter<TweetsA
         val tweet: Tweet = tweets.get(position)
 
         // Set item view based on views and data model
+        Log.i(TAG, tweet.id)
         holder.tvUsername.text = tweet.user?.name
         holder.tvTweetBody.text = tweet.body
         holder.tvTimestamp.text = tweet.getFormattedTimestamp()

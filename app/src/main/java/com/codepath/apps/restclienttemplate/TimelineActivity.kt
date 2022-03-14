@@ -1,18 +1,24 @@
 package com.codepath.apps.restclienttemplate
 
-import androidx.appcompat.app.AppCompatActivity
+import EndlessRecyclerViewScrollListener
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.codepath.apps.restclienttemplate.models.Tweet
+import com.codepath.asynchttpclient.RequestParams
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import okhttp3.Headers
 import org.json.JSONException
 
-private const val TAG = "TimelineActivity"
+
 class TimelineActivity : AppCompatActivity() {
 
     lateinit var client: TwitterClient
@@ -56,7 +62,17 @@ class TimelineActivity : AppCompatActivity() {
             )
         )
 
+        val scrollListener = object : EndlessRecyclerViewScrollListener(layoutManager) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                Log.i(TAG, "onScrollListener $page")
+                loadMoreData(page)
+            }
+        }
         getHomeTimeline()
+
+        //rvTweets.addOnScrollListener(scrollListener)
     }
 
     fun getHomeTimeline() {
@@ -68,8 +84,7 @@ class TimelineActivity : AppCompatActivity() {
                     adapter.clear()
 
                     val jsonArray = json.jsonArray
-                    tweets.addAll(Tweet.fromJsonArray(jsonArray))
-                    adapter.notifyDataSetChanged()
+                    adapter.addAll(Tweet.fromJsonArray(jsonArray))
 
                     // Now we call setRefreshing(false) to signal refresh has finished
                     swipeContainer.setRefreshing(false)
@@ -83,5 +98,58 @@ class TimelineActivity : AppCompatActivity() {
                 Log.e(TAG, "onFailure $statusCode")
             }
         })
+    }
+
+    fun loadMoreData(offset: Int){
+        client.getMoreData(object: JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Headers?, json: JsonHttpResponseHandler.JSON) {
+                Log.i(TAG, "onSuccessMoreData")
+                try {
+                    val jsonArray = json.jsonArray
+                    adapter.addAll(Tweet.fromJsonArray(jsonArray))
+
+                } catch (e: JSONException) {
+                    Log.e(TAG, "JSON Exception $e")
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Headers?, response: String?, throwable: Throwable?
+            ) {
+                Log.e(TAG, "onFailure $statusCode")
+            }
+        }, offset)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    // Handle clicks on menu item
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.compose) {
+            Toast.makeText(this, "Ready to compose tweet!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, ComposeActivity::class.java)
+            startActivityForResult(intent, REQUEST_CODE)
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    // After coming back from Compose Activity
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+            // Get data from our intent
+            val tweet = data?.getParcelableExtra<Tweet>("tweet") as Tweet
+            tweets.add(0, tweet)
+            adapter.notifyItemInserted(0)
+            rvTweets.smoothScrollToPosition(0)
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    companion object {
+        val TAG = "TimelineActivity"
+        val REQUEST_CODE = 10
     }
 }
