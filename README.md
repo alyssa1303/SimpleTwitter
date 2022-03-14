@@ -1,4 +1,4 @@
-# Project 2 - *Name of App Here*
+# Project 2 - *Simple Twitter*
 
 **Simple Twitter** is an android app that allows a user to view his/her Twitter timeline. The app utilizes [Twitter REST API](https://dev.twitter.com/rest/public).
 
