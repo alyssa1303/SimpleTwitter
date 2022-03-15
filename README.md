@@ -39,7 +39,8 @@ Here's a walkthrough of implemented user stories:
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+- Changing the color was troublesome because I had to change them in the themes instead of changing it directly in the files since it didn't work that way
+- Converting Java to Kotlin was hard so I ended up just using the Java version. 
 
 ## Open-source libraries used
 
