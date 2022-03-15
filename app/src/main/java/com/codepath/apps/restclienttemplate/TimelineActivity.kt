@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -72,6 +73,11 @@ class TimelineActivity : AppCompatActivity() {
         }
         getHomeTimeline()
 
+        val fab = findViewById<View>(R.id.fabCompose)
+        fab.setOnClickListener { view ->
+            val intent = Intent(this, ComposeActivity::class.java)
+            startActivityForResult(intent, REQUEST_CODE)
+        }
         //rvTweets.addOnScrollListener(scrollListener)
     }
 
@@ -120,20 +126,22 @@ class TimelineActivity : AppCompatActivity() {
         }, offset)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    // Handle clicks on menu item
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.compose) {
-            Toast.makeText(this, "Ready to compose tweet!", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, ComposeActivity::class.java)
-            startActivityForResult(intent, REQUEST_CODE)
+    /*
+        override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+            menuInflater.inflate(R.menu.menu_main, menu)
+            return true
         }
-        return super.onOptionsItemSelected(item)
-    }
+
+        // Handle clicks on menu item
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            if (item.itemId == R.id.compose) {
+                Toast.makeText(this, "Ready to compose tweet!", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, ComposeActivity::class.java)
+                startActivityForResult(intent, REQUEST_CODE)
+            }
+            return super.onOptionsItemSelected(item)
+        }
+    */
 
     // After coming back from Compose Activity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -147,6 +155,7 @@ class TimelineActivity : AppCompatActivity() {
 
         super.onActivityResult(requestCode, resultCode, data)
     }
+
 
     companion object {
         val TAG = "TimelineActivity"
